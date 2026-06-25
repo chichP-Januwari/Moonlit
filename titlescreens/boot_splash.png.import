@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cwh2bo7mhm2jh"
-path="res://.godot/imported/full_moon.png-7c4f211b504b7448d03d8be0eb076c02.ctex"
+uid="uid://j8sxycfo6lc2"
+path="res://.godot/imported/boot_splash.png-67f5c6bf79116f374cbaac0d7d0c477d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/full_moon.png"
-dest_files=["res://.godot/imported/full_moon.png-7c4f211b504b7448d03d8be0eb076c02.ctex"]
+source_file="res://titlescreens/boot_splash.png"
+dest_files=["res://.godot/imported/boot_splash.png-67f5c6bf79116f374cbaac0d7d0c477d.ctex"]
 
 [params]
 
