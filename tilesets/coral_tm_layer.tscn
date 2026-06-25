@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://bjk5gro4q08jh"]
+
+[ext_resource type="Texture2D" uid="uid://5ifymrkxgotq" path="res://tilesets/world_tileset.png" id="1_74h03"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_w60m1"]
+texture = ExtResource("1_74h03")
+12:0/0 = 0
+13:0/0 = 0
+13:1/0 = 0
+14:1/0 = 0
+15:1/0 = 0
+15:2/0 = 0
+15:0/0 = 0
+14:0/0 = 0
+14:2/0 = 0
+13:2/0 = 0
+12:2/0 = 0
+12:1/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_owhx7"]
+sources/0 = SubResource("TileSetAtlasSource_w60m1")
+
+[node name="CoralTMLayer" type="TileMapLayer" unique_id=1575074404]
+tile_set = SubResource("TileSet_owhx7")
