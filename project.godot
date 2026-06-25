@@ -12,12 +12,16 @@ config_version=5
 
 config/name="Moonlit"
 config/version="0.1.0 - Platform Jam release"
-run/main_scene="uid://ds6i0aw6gheyr"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 boot_splash/bg_color=Color(0.15686275, 0.15686275, 0.29411766, 1)
 boot_splash/use_filter=false
 boot_splash/image="uid://j8sxycfo6lc2"
 config/icon="uid://df1ghod0qnutc"
+
+[autoload]
+
+PhantomCameraManager="*uid://duq6jhf6unyis"
+CheckpointManager="*uid://dvml65oh16yho"
 
 [display]
 
@@ -25,6 +29,10 @@ window/size/viewport_width=640
 window/size/viewport_height=360
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/phantom_camera/plugin.cfg")
 
 [input]
 
@@ -71,9 +79,14 @@ pause={
 
 [layer_names]
 
+2d_render/layer_1="World"
+2d_render/layer_2="Breakables"
+2d_render/layer_3="Player"
 2d_physics/layer_1="World"
-2d_physics/layer_2="Breakables / Movables"
-2d_physics/layer_3="Entities"
+2d_physics/layer_2="Breakables"
+2d_physics/layer_3="Player"
+2d_physics/layer_4="Water Barrier"
+2d_physics/layer_5="Death"
 
 [rendering]
 
