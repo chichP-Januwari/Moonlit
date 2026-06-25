@@ -22,34 +22,43 @@ enum LAND_STATE {
 	RUNNING,
 	JUMP,
 	FALL,
+	GLIDING,
+	TIRED,
 }
 
-# Nodes
-@export var collision_larva: CollisionShape2D
-@export var collision_fly: CollisionShape2D
+# Nodes: Player
+@export var collision: CollisionShape2D
 @export var water_sprite: AnimatedSprite2D
 @export var land_sprite: AnimatedSprite2D
 @export var max_charging_time: Timer
 @export var max_charge_time: Timer
 @export var max_jump_time: Timer
+@export var max_glide_time: Timer
 @export var jump_cooldown: Timer
-@export var jump_buffer: Timer
+
+# Nodes: Level
+@export var world_tilemap: TileMapLayer
 
 # Constants
 const WATER_MAX_SPEED := 300.0
-const WATER_JUMP_FORCE := -50.0
+const WATER_JUMP_FORCE := -40.0
 const WATER_CHARGE_FORCE := 300.0
-const WATER_MAX_CHARGES := 2 # You can charge underwater, but you have a speed limit and charge limit
+const WATER_MAX_CHARGES := 2   # You can charge underwater, but you have a speed limit and charge limit
 
-const LAND_MAX_SPEED := 1000.0
-const LAND_JUMP_FORCE := -170.0 # You have a high speed limit on land, but you have no charge
-const LAND_FLY_FORCE := 250.0 # (instead you glide, which lets you convert gravity to horizontal speed)
+const LAND_MAX_SPEED := 1000.0 # You have a high speed limit on land, but you have no charge
+const LAND_JUMP_FORCE := -35.0 # Instead you glidee
+const LAND_GLIDE_SPEED := 200.0
 
-var water_friction := 0.05
-var land_friction := 0.3
+var water_friction := 0.15 # Lower = slower
+var land_friction := 0.30 # Higher = faster
+var land_glide_friction := 0.0000005
 
-var water_gravity : float = ProjectSettings.get_setting("physics/2d/default_gravity") / 4 # 245
-var land_gravity : float = ProjectSettings.get_setting("physics/2d/default_gravity") # 980
+var water_lerp := 0.30  # W Larps, the difference between friction and this is that
+var land_lerp := 0.0125 # W Larps, the former is for going to zero, the latter is for going to max speed
+var land_glide_lerp := 0.20 # here its for going to glide speed (vert)
+
+var water_gravity : float = ProjectSettings.get_setting("physics/2d/default_gravity") / 2
+var land_gravity : float = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 # Trackers
 @export var current_state : STATE
@@ -57,23 +66,32 @@ var land_gravity : float = ProjectSettings.get_setting("physics/2d/default_gravi
 @export var current_land_state : LAND_STATE
 
 var direction : Vector2
-var last_direction : Vector2
+var last_direction : Vector2i
 var last_velocity : Vector2
+
+var tilemap_coordinates : Vector2i
+var tilemap_data : TileData
 
 var charges_left : int = WATER_MAX_CHARGES:
 	set(value):
 		charges_left = clampi(value, 0, WATER_MAX_CHARGES)
+var gliding_tired : bool = false
 
 func _ready() -> void:
 	pass
 
 func _physics_process(delta: float) -> void:
 	direction = Input.get_vector("left", "right", "up", "down").normalized()
+	if world_tilemap:
+		tilemap_coordinates = world_tilemap.local_to_map(world_tilemap.to_local(global_position))
+		tilemap_data = world_tilemap.get_cell_tile_data(tilemap_coordinates)
 	
-	if in_water():
+	if in_water() and current_state != STATE.WATER:
 		current_state = STATE.WATER
-	else:
+		switch_water(WATER_STATE.FALL) # To WATER
+	elif not in_water() and not current_state == STATE.LAND:
 		current_state = STATE.LAND
+		switch_land(LAND_STATE.FALL) # To LAND
 	
 	match current_state:
 		STATE.WATER:
@@ -87,23 +105,26 @@ func _physics_process(delta: float) -> void:
 			elif sign(last_direction.x) == -1:
 				water_sprite.flip_h = true
 			
-			print(WATER_STATE.find_key(current_water_state))
+			water_sprite.visible = true
+			
+			land_sprite.visible = false
 		
 		STATE.LAND:
 			land_state_machine(current_land_state, delta)
 			
-			if direction: # Some states don't track and use it
-				last_direction = Vector2i(direction.ceil())
+			if not current_land_state == LAND_STATE.GLIDING and direction:
+				last_direction = Vector2i(direction.round())
 				
 			if sign(last_direction.x) == 1:
 				land_sprite.flip_h = false
 			elif sign(last_direction.x) == -1:
 				land_sprite.flip_h = true
 			
-			print(LAND_STATE.find_key(current_land_state))
+			water_sprite.visible = false
+			
+			land_sprite.visible = true
 	
 	move_and_slide()
-	print(velocity)
 
 func water_state_machine(state: WATER_STATE, delta: float):
 	match state:
@@ -123,7 +144,7 @@ func water_state_machine(state: WATER_STATE, delta: float):
 			
 		WATER_STATE.SWIMMING:
 			if direction:
-				velocity.x = lerp(velocity.x, WATER_MAX_SPEED * direction.x , water_friction)
+				velocity.x = lerp(velocity.x, WATER_MAX_SPEED * direction.x , water_lerp)
 			elif not direction:
 				switch_water(WATER_STATE.IDLE) # To IDLE
 			
@@ -138,7 +159,7 @@ func water_state_machine(state: WATER_STATE, delta: float):
 			
 		WATER_STATE.JUMP:
 			if direction:
-				velocity.x = lerp(velocity.x, WATER_MAX_SPEED * direction.x , water_friction)
+				velocity.x = lerp(velocity.x, WATER_MAX_SPEED * direction.x , water_lerp)
 			elif not direction:
 				velocity.x = lerp(velocity.x, 0.0, water_friction)
 			
@@ -149,7 +170,7 @@ func water_state_machine(state: WATER_STATE, delta: float):
 			
 		WATER_STATE.FALL:
 			if direction:
-				velocity.x = lerp(velocity.x, WATER_MAX_SPEED * direction.x , water_friction)
+				velocity.x = lerp(velocity.x, WATER_MAX_SPEED * direction.x , water_lerp)
 			elif not direction:
 				velocity.x = lerp(velocity.x, 0.0, water_friction)
 			velocity.y += water_gravity * delta
@@ -167,7 +188,7 @@ func water_state_machine(state: WATER_STATE, delta: float):
 			elif Input.is_action_pressed("charge") and not charges_left:
 				switch_water(WATER_STATE.TIRED) # To TIRED
 			
-			if is_on_floor():
+			if is_on_floor() and not direction:
 				switch_water(WATER_STATE.IDLE) # To IDLE
 			elif is_on_floor() and direction:
 				switch_water(WATER_STATE.SWIMMING) # To SWIMMING
@@ -196,12 +217,12 @@ func water_state_machine(state: WATER_STATE, delta: float):
 		
 		WATER_STATE.TIRED:
 			if direction:
-				velocity.x = lerp(velocity.x, WATER_MAX_SPEED * direction.x , water_friction)
+				velocity.x = lerp(velocity.x, WATER_MAX_SPEED * direction.x , water_lerp)
 			elif not direction:
 				velocity.x = lerp(velocity.x, 0.0, water_friction)
 			velocity.y += water_gravity * delta
 			
-			if is_on_floor():
+			if is_on_floor() and not direction:
 				switch_water(WATER_STATE.IDLE) # To IDLE
 			elif is_on_floor() and direction:
 				switch_water(WATER_STATE.SWIMMING) # To SWIMMING
@@ -239,7 +260,6 @@ func switch_water(to_state: WATER_STATE):
 				max_charge_time.wait_time *= 0.5
 				max_charge_time.stop()
 			max_charge_time.start()
-			jump_buffer.start()
 			
 			charges_left -= 1
 		
@@ -249,25 +269,137 @@ func switch_water(to_state: WATER_STATE):
 func land_state_machine(state: LAND_STATE, delta: float):
 	match state:
 		LAND_STATE.IDLE:
-			pass
+			velocity = velocity.lerp(Vector2.ZERO, land_friction)
+			if direction:
+				switch_land(LAND_STATE.RUNNING) # To RUNNING
+			
+			if Input.is_action_just_pressed("rise"):
+				switch_land(LAND_STATE.JUMP) # To JUMP
+			
+			if not is_on_floor():
+				switch_land(LAND_STATE.FALL) # To FALL
+		
 		LAND_STATE.RUNNING:
-			pass
+			if direction:
+				velocity.x = lerp(velocity.x, LAND_MAX_SPEED * direction.x, land_lerp)
+			elif not direction:
+				switch_land(LAND_STATE.IDLE) # To IDLE
+			
+			if not is_on_floor():
+				switch_land(LAND_STATE.FALL) # To FALL
+			
+			if Input.is_action_just_pressed("rise"):
+				switch_land(LAND_STATE.JUMP) # To JUMP
+			
 		LAND_STATE.JUMP:
-			pass
+			if direction:
+				velocity.x = lerp(velocity.x, LAND_MAX_SPEED * direction.x , land_lerp)
+			elif not direction:
+				velocity.x = lerp(velocity.x, 0.0, land_friction)
+			
+			velocity.y += LAND_JUMP_FORCE
+			
+			if max_jump_time.is_stopped() or Input.is_action_just_released("rise"):
+				switch_land(LAND_STATE.FALL) # To FALL
+			
 		LAND_STATE.FALL:
-			pass
+			if direction:
+				velocity.x = lerp(velocity.x, LAND_MAX_SPEED * direction.x , land_lerp)
+			elif not direction:
+				velocity.x = lerp(velocity.x, 0.0, land_friction)
+			velocity.y += land_gravity * delta
+			
+			last_velocity = velocity
+			
+			if land_sprite.animation == "bug_fall" and direction:
+				land_sprite.play("bug_run")
+			elif not direction:
+				land_sprite.play("bug_fall")
+			
+			if is_on_floor() and not direction:
+				switch_land(LAND_STATE.IDLE) # To IDLE
+			elif is_on_floor() and direction:
+				switch_land(LAND_STATE.RUNNING) # To RUNNING
+			
+			if Input.is_action_just_pressed("rise") and not gliding_tired:
+				switch_land(LAND_STATE.JUMP) # To JUMP
+			elif Input.is_action_just_pressed("rise") and gliding_tired:
+				switch_land(LAND_STATE.TIRED) # To TIRED
+			
+			if Input.is_action_just_pressed("charge") and not gliding_tired:
+				switch_land(LAND_STATE.GLIDING) # To GLIDING
+			elif Input.is_action_just_pressed("charge") and gliding_tired:
+				switch_land(LAND_STATE.TIRED) # To TIRED
+				
+		LAND_STATE.GLIDING:
+			velocity.x = lerp(velocity.x, 0.0, land_glide_friction)
+			velocity.y = lerp(velocity.y, 80.0, land_glide_lerp)
+			
+			if is_on_floor() and not direction:
+				switch_land(LAND_STATE.IDLE)
+			elif is_on_floor() and direction:
+				switch_land(LAND_STATE.RUNNING)
+			
+			if Input.is_action_just_released("charge") or is_on_wall():
+				switch_land(LAND_STATE.FALL) # To FALL
+			
+			if max_glide_time.is_stopped():
+				switch_land(LAND_STATE.TIRED) # To TIRED
+			
+		LAND_STATE.TIRED:
+			if direction:
+				velocity.x = lerp(velocity.x, LAND_MAX_SPEED * direction.x , land_lerp)
+			elif not direction:
+				velocity.x = lerp(velocity.x, 0.0, land_friction)
+			velocity.y += land_gravity * delta
+			
+			if is_on_floor() and not direction:
+				switch_land(LAND_STATE.IDLE) # To IDLE
+			elif is_on_floor() and direction:
+				switch_land(LAND_STATE.RUNNING) # To RUNNING
 
 func switch_land(to_state: LAND_STATE):
 	current_land_state = to_state
 	match to_state:
 		LAND_STATE.IDLE:
-			pass
+			land_sprite.play("bug_idle")
+			gliding_tired = false
+			
 		LAND_STATE.RUNNING:
-			pass
+			land_sprite.play("bug_run")
+			gliding_tired = false
+			
 		LAND_STATE.JUMP:
-			pass
+			land_sprite.play("bug_jump")
+			max_jump_time.stop()
+			max_jump_time.start()
+			
 		LAND_STATE.FALL:
-			pass
+			land_sprite.play("bug_fall")
+			
+		LAND_STATE.GLIDING:
+			land_sprite.play("bug_glide")
+			max_glide_time.stop()
+			max_glide_time.start()
+			
+			if abs(last_velocity.x) < 50.0: # Handle edge cases of velocity being weird
+				last_velocity.x = last_direction.x * LAND_GLIDE_SPEED # If too slow, go faster lol
+			
+			if last_velocity.y >= 120.0: # Fix for random "jumping" when entering glide
+				last_velocity.y = 90.0
+			
+			velocity = last_velocity
+			gliding_tired = true
+			
+		LAND_STATE.TIRED:
+			land_sprite.play("bug_tired")
 
 func in_water():
-	return true # Placeholder, should convert player vector to tilemap coord, check tile if water, then return true if so
+	if tilemap_data:
+		if tilemap_data.has_custom_data("Water"):
+			print(true)
+			return tilemap_data.get_custom_data("Water")
+		elif tilemap_data.has_custom_data("Water"):
+			return false
+	elif not tilemap_data:
+		return false

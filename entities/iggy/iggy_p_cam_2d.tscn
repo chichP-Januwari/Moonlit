@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://bvhru2i6kxm01"]
+
+[ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="1_123ax"]
+[ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="2_lajg3"]
+
+[sub_resource type="Resource" id="Resource_1uryg"]
+script = ExtResource("2_lajg3")
+
+[node name="IggyPCam2D2" type="Node2D" unique_id=761216165 node_paths=PackedStringArray("follow_target")]
+top_level = true
+script = ExtResource("1_123ax")
+priority = 10
+follow_mode = 2
+follow_target = NodePath("")
+snap_to_pixel = true
+tween_resource = SubResource("Resource_1uryg")
+lookahead = true
+lookahead_time = Vector2(0.25, 0)
+lookahead_acceleration = 0.75
+lookahead_deceleration = 0.75
+lookahead_max = true
+lookahead_max_value = Vector2(330, 330)
+metadata/_custom_type_script = "uid://bhexx6mj1xv3q"

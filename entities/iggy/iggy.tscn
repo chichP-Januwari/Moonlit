@@ -3,18 +3,25 @@
 [ext_resource type="Texture2D" uid="uid://b3ja3xjgv1klv" path="res://entities/iggy/larva_charge.png" id="1_0iaq1"]
 [ext_resource type="Script" uid="uid://7d05c3vwc6u5" path="res://entities/iggy/scripts/iggy.gd" id="1_r07pv"]
 [ext_resource type="Texture2D" uid="uid://bxy51j4tdoof6" path="res://entities/iggy/larva_idle.png" id="1_yvv5f"]
+[ext_resource type="Shader" uid="uid://1t3tfh2udwt5" path="res://entities/iggy/iggy.gdshader" id="2_ghn85"]
 [ext_resource type="Texture2D" uid="uid://cjh0daqwfc27k" path="res://entities/iggy/larva_charging.png" id="2_r07pv"]
 [ext_resource type="Texture2D" uid="uid://dcbjvydk8f6tl" path="res://entities/iggy/larva_swim.png" id="4_6k3pg"]
 [ext_resource type="Texture2D" uid="uid://o8nynrprtv7n" path="res://entities/iggy/larva_fall.png" id="4_8nkt6"]
 [ext_resource type="Texture2D" uid="uid://wlmovjwf4p43" path="res://entities/iggy/larva_jump.png" id="5_6k3pg"]
 [ext_resource type="Texture2D" uid="uid://r0exy1qcqfwr" path="res://entities/iggy/larva_tired.png" id="8_okg2f"]
+[ext_resource type="Texture2D" uid="uid://dkn7of7gbtojp" path="res://entities/iggy/bug_fall.png" id="9_4yq00"]
+[ext_resource type="Texture2D" uid="uid://cqpu4hmpq4fm5" path="res://entities/iggy/bug_idle.png" id="10_wnlrj"]
+[ext_resource type="Texture2D" uid="uid://dmvw20bkx05b1" path="res://entities/iggy/bug_glide.png" id="10_x4ipo"]
+[ext_resource type="Texture2D" uid="uid://c5arbq3qr85lr" path="res://entities/iggy/bug_jump.png" id="11_x4ipo"]
+[ext_resource type="Texture2D" uid="uid://ddfcjli7rmroe" path="res://entities/iggy/bug_run.png" id="12_ghn85"]
+[ext_resource type="Texture2D" uid="uid://7kvuiuq55rcv" path="res://entities/iggy/bug_tired.png" id="14_ghn85"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_0iaq1"]
 radius = 5.0
-height = 32.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_r07pv"]
-radius = 9.055386
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_x4ipo"]
+shader = ExtResource("2_ghn85")
+shader_parameter/fade = false
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8nkt6"]
 atlas = ExtResource("1_0iaq1")
@@ -119,37 +126,121 @@ animations = [{
 "speed": 1.0
 }]
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_owhx7"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_4jgiv"]
+atlas = ExtResource("10_wnlrj")
+region = Rect2(0, 0, 32, 16)
 
-[node name="Iggy" type="CharacterBody2D" unique_id=328791983 node_paths=PackedStringArray("collision_larva", "collision_fly", "water_sprite", "land_sprite", "max_charging_time", "max_charge_time", "max_jump_time", "jump_cooldown", "jump_buffer")]
+[sub_resource type="AtlasTexture" id="AtlasTexture_bqi8r"]
+atlas = ExtResource("10_wnlrj")
+region = Rect2(32, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fki88"]
+atlas = ExtResource("12_ghn85")
+region = Rect2(0, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1k0yv"]
+atlas = ExtResource("12_ghn85")
+region = Rect2(32, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m3e4n"]
+atlas = ExtResource("12_ghn85")
+region = Rect2(64, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kpo8w"]
+atlas = ExtResource("12_ghn85")
+region = Rect2(96, 0, 32, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_owhx7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_4yq00")
+}],
+"loop": 1,
+"name": &"bug_fall",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("10_x4ipo")
+}],
+"loop": 1,
+"name": &"bug_glide",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4jgiv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bqi8r")
+}],
+"loop": 1,
+"name": &"bug_idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("11_x4ipo")
+}],
+"loop": 1,
+"name": &"bug_jump",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fki88")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1k0yv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m3e4n")
+}, {
+"duration": 4.0,
+"texture": SubResource("AtlasTexture_kpo8w")
+}],
+"loop": 1,
+"name": &"bug_run",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("14_ghn85")
+}],
+"loop": 1,
+"name": &"bug_tired",
+"speed": 1.0
+}]
+
+[node name="Iggy" type="CharacterBody2D" unique_id=328791983 node_paths=PackedStringArray("collision", "water_sprite", "land_sprite", "max_charging_time", "max_charge_time", "max_jump_time", "max_glide_time", "jump_cooldown")]
 script = ExtResource("1_r07pv")
-collision_larva = NodePath("CollisionShapeLarva")
-collision_fly = NodePath("CollisionShapeFly")
+collision = NodePath("CollisionShape")
 water_sprite = NodePath("WaterSprite")
 land_sprite = NodePath("LandSprite")
 max_charging_time = NodePath("MaxChargingTime")
 max_charge_time = NodePath("MaxChargeTime")
 max_jump_time = NodePath("MaxJumpTime")
+max_glide_time = NodePath("MaxGlideTime")
 jump_cooldown = NodePath("JumpCooldown")
-jump_buffer = NodePath("JumpBuffer")
 
-[node name="CollisionShapeLarva" type="CollisionShape2D" parent="." unique_id=2110471759]
+[node name="CollisionShape" type="CollisionShape2D" parent="." unique_id=2110471759]
+position = Vector2(0, 3)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_0iaq1")
 
-[node name="CollisionShapeFly" type="CollisionShape2D" parent="." unique_id=496591335]
-visible = false
-shape = SubResource("CircleShape2D_r07pv")
-disabled = true
-
 [node name="WaterSprite" type="AnimatedSprite2D" parent="." unique_id=1779653258]
+visible = false
+material = SubResource("ShaderMaterial_x4ipo")
 sprite_frames = SubResource("SpriteFrames_6k3pg")
-animation = &"larva_tired"
+animation = &"larva_idle"
 autoplay = "larva_idle"
 
 [node name="LandSprite" type="AnimatedSprite2D" parent="." unique_id=209853300]
-visible = false
+material = SubResource("ShaderMaterial_x4ipo")
 sprite_frames = SubResource("SpriteFrames_owhx7")
+animation = &"bug_idle"
+autoplay = "bug_idle"
 
 [node name="MaxChargingTime" type="Timer" parent="." unique_id=782257033]
 process_callback = 0
@@ -165,12 +256,24 @@ process_callback = 0
 wait_time = 0.05
 one_shot = true
 
+[node name="MaxGlideTime" type="Timer" parent="." unique_id=1257844414]
+process_callback = 0
+wait_time = 8.0
+one_shot = true
+
 [node name="JumpCooldown" type="Timer" parent="." unique_id=1291280119]
 process_callback = 0
 wait_time = 0.1
 one_shot = true
 
-[node name="JumpBuffer" type="Timer" parent="." unique_id=1253668427]
+[node name="FlashTime" type="Timer" parent="." unique_id=647411068]
 process_callback = 0
-wait_time = 0.2
-one_shot = true
+wait_time = 0.25
+
+[node name="RightmostTile" type="Node2D" parent="." unique_id=1623508388]
+position = Vector2(20, 3)
+
+[node name="LeftmostTile" type="Node2D" parent="." unique_id=1818163708]
+position = Vector2(-20, 3)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1280876841]
