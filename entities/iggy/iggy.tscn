@@ -3,7 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://b3ja3xjgv1klv" path="res://entities/iggy/larva_charge.png" id="1_0iaq1"]
 [ext_resource type="Script" uid="uid://7d05c3vwc6u5" path="res://entities/iggy/scripts/iggy.gd" id="1_r07pv"]
 [ext_resource type="Texture2D" uid="uid://bxy51j4tdoof6" path="res://entities/iggy/larva_idle.png" id="1_yvv5f"]
-[ext_resource type="Shader" uid="uid://1t3tfh2udwt5" path="res://entities/iggy/iggy.gdshader" id="2_ghn85"]
 [ext_resource type="Texture2D" uid="uid://cjh0daqwfc27k" path="res://entities/iggy/larva_charging.png" id="2_r07pv"]
 [ext_resource type="Texture2D" uid="uid://dcbjvydk8f6tl" path="res://entities/iggy/larva_swim.png" id="4_6k3pg"]
 [ext_resource type="Texture2D" uid="uid://o8nynrprtv7n" path="res://entities/iggy/larva_fall.png" id="4_8nkt6"]
@@ -18,10 +17,6 @@
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_0iaq1"]
 radius = 5.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_x4ipo"]
-shader = ExtResource("2_ghn85")
-shader_parameter/fade = false
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8nkt6"]
 atlas = ExtResource("1_0iaq1")
@@ -231,13 +226,11 @@ shape = SubResource("CapsuleShape2D_0iaq1")
 
 [node name="WaterSprite" type="AnimatedSprite2D" parent="." unique_id=1779653258]
 visible = false
-material = SubResource("ShaderMaterial_x4ipo")
 sprite_frames = SubResource("SpriteFrames_6k3pg")
 animation = &"larva_idle"
 autoplay = "larva_idle"
 
 [node name="LandSprite" type="AnimatedSprite2D" parent="." unique_id=209853300]
-material = SubResource("ShaderMaterial_x4ipo")
 sprite_frames = SubResource("SpriteFrames_owhx7")
 animation = &"bug_idle"
 autoplay = "bug_idle"
