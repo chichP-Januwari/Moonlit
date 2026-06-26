@@ -28,6 +28,7 @@ enum LAND_STATE {
 
 # Nodes: Player
 @export var collision: CollisionShape2D
+@export var indicator_ring: AnimatedSprite2D
 @export var water_sprite: AnimatedSprite2D
 @export var land_sprite: AnimatedSprite2D
 @export var max_charging_time: Timer
@@ -46,7 +47,7 @@ const WATER_CHARGE_FORCE := 300.0
 const WATER_MAX_CHARGES := 2   # You can charge underwater, but you have a speed limit and charge limit
 
 const LAND_MAX_SPEED := 1000.0 # You have a high speed limit on land, but you have no charge
-const LAND_JUMP_FORCE := -35.0 # Instead you glidee
+const LAND_JUMP_FORCE := -35.0 # Instead you glide~
 const LAND_GLIDE_SPEED := 200.0
 
 var water_friction := 0.15 # Lower = slower
@@ -76,9 +77,6 @@ var charges_left : int = WATER_MAX_CHARGES:
 	set(value):
 		charges_left = clampi(value, 0, WATER_MAX_CHARGES)
 var gliding_tired : bool = false
-
-func _ready() -> void:
-	pass
 
 func _physics_process(delta: float) -> void:
 	direction = Input.get_vector("left", "right", "up", "down").normalized()
@@ -233,15 +231,15 @@ func switch_water(to_state: WATER_STATE):
 		WATER_STATE.IDLE:
 			water_sprite.play("larva_idle")
 			charges_left = WATER_MAX_CHARGES
-		
+			
 		WATER_STATE.SWIMMING:
 			water_sprite.play("larva_swim")
 			charges_left = WATER_MAX_CHARGES
-		
+			
 		WATER_STATE.JUMP:
 			water_sprite.play("larva_jump")
 			max_jump_time.start()
-		
+			
 		WATER_STATE.FALL:
 			water_sprite.play("larva_fall")
 			jump_cooldown.start()
@@ -397,9 +395,8 @@ func switch_land(to_state: LAND_STATE):
 func in_water():
 	if tilemap_data:
 		if tilemap_data.has_custom_data("Water"):
-			print(true)
 			return tilemap_data.get_custom_data("Water")
-		elif tilemap_data.has_custom_data("Water"):
+		elif not tilemap_data.has_custom_data("Water"):
 			return false
 	elif not tilemap_data:
 		return false

@@ -3,10 +3,16 @@
 [ext_resource type="Texture2D" uid="uid://b3ja3xjgv1klv" path="res://entities/iggy/larva_charge.png" id="1_0iaq1"]
 [ext_resource type="Script" uid="uid://7d05c3vwc6u5" path="res://entities/iggy/scripts/iggy.gd" id="1_r07pv"]
 [ext_resource type="Texture2D" uid="uid://bxy51j4tdoof6" path="res://entities/iggy/larva_idle.png" id="1_yvv5f"]
+[ext_resource type="Texture2D" uid="uid://cqe02jprs5fce" path="res://entities/iggy/ring_charge.png" id="2_1k0yv"]
+[ext_resource type="Texture2D" uid="uid://dakagf28bwwxn" path="res://entities/iggy/ring_reset.png" id="2_ghn85"]
 [ext_resource type="Texture2D" uid="uid://cjh0daqwfc27k" path="res://entities/iggy/larva_charging.png" id="2_r07pv"]
+[ext_resource type="Texture2D" uid="uid://dsre2rkofjdua" path="res://entities/iggy/ring_glide.png" id="3_m3e4n"]
 [ext_resource type="Texture2D" uid="uid://dcbjvydk8f6tl" path="res://entities/iggy/larva_swim.png" id="4_6k3pg"]
 [ext_resource type="Texture2D" uid="uid://o8nynrprtv7n" path="res://entities/iggy/larva_fall.png" id="4_8nkt6"]
+[ext_resource type="Texture2D" uid="uid://c5ucusfopoff7" path="res://entities/iggy/ring_last_charge.png" id="4_kpo8w"]
+[ext_resource type="Texture2D" uid="uid://dxd3ru8cv8uxf" path="res://entities/iggy/ring_last_glide.png" id="5_5uwxn"]
 [ext_resource type="Texture2D" uid="uid://wlmovjwf4p43" path="res://entities/iggy/larva_jump.png" id="5_6k3pg"]
+[ext_resource type="Script" uid="uid://bf0pxu4tkfnt5" path="res://entities/iggy/scripts/indicator_ring.gd" id="7_m3e4n"]
 [ext_resource type="Texture2D" uid="uid://r0exy1qcqfwr" path="res://entities/iggy/larva_tired.png" id="8_okg2f"]
 [ext_resource type="Texture2D" uid="uid://dkn7of7gbtojp" path="res://entities/iggy/bug_fall.png" id="9_4yq00"]
 [ext_resource type="Texture2D" uid="uid://cqpu4hmpq4fm5" path="res://entities/iggy/bug_idle.png" id="10_wnlrj"]
@@ -17,6 +23,49 @@
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_0iaq1"]
 radius = 5.0
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_a5ap3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_1k0yv")
+}],
+"loop": 1,
+"name": &"ring_charge",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_m3e4n")
+}],
+"loop": 1,
+"name": &"ring_glide",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_kpo8w")
+}],
+"loop": 1,
+"name": &"ring_last_charge",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_5uwxn")
+}],
+"loop": 1,
+"name": &"ring_last_glide",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ghn85")
+}],
+"loop": 0,
+"name": &"ring_reset",
+"speed": 1.0
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8nkt6"]
 atlas = ExtResource("1_0iaq1")
@@ -208,9 +257,11 @@ animations = [{
 "speed": 1.0
 }]
 
-[node name="Iggy" type="CharacterBody2D" unique_id=328791983 node_paths=PackedStringArray("collision", "water_sprite", "land_sprite", "max_charging_time", "max_charge_time", "max_jump_time", "max_glide_time", "jump_cooldown")]
+[node name="Iggy" type="CharacterBody2D" unique_id=328791983 node_paths=PackedStringArray("collision", "indicator_ring", "water_sprite", "land_sprite", "max_charging_time", "max_charge_time", "max_jump_time", "max_glide_time", "jump_cooldown")]
+visibility_layer = 4
 script = ExtResource("1_r07pv")
 collision = NodePath("CollisionShape")
+indicator_ring = NodePath("IndicatorRing")
 water_sprite = NodePath("WaterSprite")
 land_sprite = NodePath("LandSprite")
 max_charging_time = NodePath("MaxChargingTime")
@@ -224,13 +275,22 @@ position = Vector2(0, 3)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_0iaq1")
 
+[node name="IndicatorRing" type="AnimatedSprite2D" parent="." unique_id=781482051 node_paths=PackedStringArray("iggy")]
+modulate = Color(1, 1, 1, 0.74509805)
+visibility_layer = 4
+sprite_frames = SubResource("SpriteFrames_a5ap3")
+animation = &"ring_charge"
+script = ExtResource("7_m3e4n")
+iggy = NodePath("..")
+
 [node name="WaterSprite" type="AnimatedSprite2D" parent="." unique_id=1779653258]
-visible = false
+visibility_layer = 4
 sprite_frames = SubResource("SpriteFrames_6k3pg")
 animation = &"larva_idle"
 autoplay = "larva_idle"
 
 [node name="LandSprite" type="AnimatedSprite2D" parent="." unique_id=209853300]
+visibility_layer = 4
 sprite_frames = SubResource("SpriteFrames_owhx7")
 animation = &"bug_idle"
 autoplay = "bug_idle"
@@ -259,14 +319,10 @@ process_callback = 0
 wait_time = 0.1
 one_shot = true
 
-[node name="FlashTime" type="Timer" parent="." unique_id=647411068]
-process_callback = 0
-wait_time = 0.25
-
 [node name="RightmostTile" type="Node2D" parent="." unique_id=1623508388]
 position = Vector2(20, 3)
 
 [node name="LeftmostTile" type="Node2D" parent="." unique_id=1818163708]
 position = Vector2(-20, 3)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1280876841]
+[connection signal="animation_changed" from="IndicatorRing" to="IndicatorRing" method="_on_animation_changed"]
