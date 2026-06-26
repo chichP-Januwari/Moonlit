@@ -12,6 +12,7 @@ config_version=5
 
 config/name="Moonlit"
 config/version="0.1.0 - Platform Jam release"
+run/main_scene="uid://851b88p1ujl4"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 boot_splash/bg_color=Color(0.15686275, 0.15686275, 0.29411766, 1)
 boot_splash/use_filter=false
