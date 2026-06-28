@@ -3,7 +3,7 @@ extends AnimatedSprite2D
 # Nodes
 @export var iggy: Player
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	match iggy.current_state:
 		Player.STATE.WATER:
 			match iggy.current_water_state:

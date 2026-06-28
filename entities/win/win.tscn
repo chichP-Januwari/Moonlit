@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://cj2moxdvvyrg6"]
+
+[ext_resource type="Texture2D" uid="uid://cmegw6bfg8yda" path="res://entities/win/flower.png" id="1_42oef"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_owhx7"]
+size = Vector2(12, 24)
+
+[node name="Win" type="Area2D" unique_id=2031364023]
+collision_mask = 4
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=930916652]
+shape = SubResource("RectangleShape2D_owhx7")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1555447684]
+texture = ExtResource("1_42oef")

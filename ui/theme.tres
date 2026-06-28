@@ -1,0 +1,8 @@
+[gd_resource type="Theme" format=3 uid="uid://bjqlt8rrh71vt"]
+
+[ext_resource type="FontFile" uid="uid://cw2miqh1bi3u3" path="res://assets/Jersey10-Regular.ttf" id="1_rqugq"]
+
+[resource]
+default_font = ExtResource("1_rqugq")
+default_font_size = 40
+Label/colors/font_shadow_color = Color(0.84313726, 0.84313726, 0.7058824, 1)

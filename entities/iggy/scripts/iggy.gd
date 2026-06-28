@@ -1,10 +1,11 @@
 extends CharacterBody2D
-class_name Player
+class_name Player # Huh, it's so similar... So his stand and mine are the same...!
 
 # States
 enum STATE {
 	WATER,
 	LAND,
+	DEAD,
 }
 
 enum WATER_STATE {
@@ -27,7 +28,6 @@ enum LAND_STATE {
 }
 
 # Nodes: Player
-@export var collision: CollisionShape2D
 @export var indicator_ring: AnimatedSprite2D
 @export var water_sprite: AnimatedSprite2D
 @export var land_sprite: AnimatedSprite2D
@@ -36,6 +36,7 @@ enum LAND_STATE {
 @export var max_jump_time: Timer
 @export var max_glide_time: Timer
 @export var jump_cooldown: Timer
+@export var audio: AudioStreamPlayer
 
 # Nodes: Level
 @export var world_tilemap: TileMapLayer
@@ -78,18 +79,39 @@ var charges_left : int = WATER_MAX_CHARGES:
 		charges_left = clampi(value, 0, WATER_MAX_CHARGES)
 var gliding_tired : bool = false
 
+# Signal
+signal died
+
+func _ready() -> void:
+	CheckpointManager.last_checkpoint_position = position
+
 func _physics_process(delta: float) -> void:
 	direction = Input.get_vector("left", "right", "up", "down").normalized()
 	if world_tilemap:
 		tilemap_coordinates = world_tilemap.local_to_map(world_tilemap.to_local(global_position))
 		tilemap_data = world_tilemap.get_cell_tile_data(tilemap_coordinates)
 	
-	if in_water() and current_state != STATE.WATER:
+	if in_water() and not current_state == STATE.WATER:
 		current_state = STATE.WATER
+		audio.stop()
+		audio.stream = load("res://entities/iggy/splash.ogg")
+		audio.play()
 		switch_water(WATER_STATE.FALL) # To WATER
 	elif not in_water() and not current_state == STATE.LAND:
 		current_state = STATE.LAND
+		audio.stop()
+		audio.stream = load("res://entities/iggy/splash.ogg")
+		audio.play()
 		switch_land(LAND_STATE.FALL) # To LAND
+		
+	if not current_state == STATE.DEAD:
+		if get_last_slide_collision():
+			var death_collider = get_last_slide_collision().get_collider()
+			if death_collider is TileMapLayer:
+				var tile_rid = get_last_slide_collision().get_collider_rid()
+				var collider_layer = PhysicsServer2D.body_get_collision_layer(tile_rid)
+				if collider_layer == 0b10000: # If that fucker is on bit 4
+					die() # To DEAD
 	
 	match current_state:
 		STATE.WATER:
@@ -121,6 +143,9 @@ func _physics_process(delta: float) -> void:
 			water_sprite.visible = false
 			
 			land_sprite.visible = true
+			
+		STATE.DEAD:
+			velocity = Vector2.ZERO
 	
 	move_and_slide()
 
@@ -227,6 +252,9 @@ func water_state_machine(state: WATER_STATE, delta: float):
 
 func switch_water(to_state: WATER_STATE):
 	current_water_state = to_state
+	set_collision_mask_value(2, true)
+	set_collision_mask_value(4, true)
+	
 	match to_state:
 		WATER_STATE.IDLE:
 			water_sprite.play("larva_idle")
@@ -251,6 +279,9 @@ func switch_water(to_state: WATER_STATE):
 		
 		WATER_STATE.CHARGED:
 			water_sprite.play("larva_charge")
+			audio.stop()
+			audio.stream = load("res://entities/iggy/bubble.ogg")
+			audio.play()
 			if max_charging_time.is_stopped():
 				max_charge_time.wait_time = .25
 			else:
@@ -260,6 +291,8 @@ func switch_water(to_state: WATER_STATE):
 			max_charge_time.start()
 			
 			charges_left -= 1
+			set_collision_mask_value(2, false)
+			set_collision_mask_value(4, false)
 		
 		WATER_STATE.TIRED:
 			water_sprite.play("larva_tired")
@@ -358,6 +391,9 @@ func land_state_machine(state: LAND_STATE, delta: float):
 
 func switch_land(to_state: LAND_STATE):
 	current_land_state = to_state
+	set_collision_mask_value(2, true)
+	set_collision_mask_value(4, true)
+	
 	match to_state:
 		LAND_STATE.IDLE:
 			land_sprite.play("bug_idle")
@@ -389,6 +425,9 @@ func switch_land(to_state: LAND_STATE):
 			velocity = last_velocity
 			gliding_tired = true
 			
+			set_collision_mask_value(2, false)
+			set_collision_mask_value(4, false)
+			
 		LAND_STATE.TIRED:
 			land_sprite.play("bug_tired")
 
@@ -400,3 +439,17 @@ func in_water():
 			return false
 	elif not tilemap_data:
 		return false
+
+func die():
+	if current_state == STATE.WATER:
+		current_state = STATE.DEAD
+		water_sprite.play("larva_dead")
+		
+	elif current_state == STATE.LAND:
+		current_state = STATE.DEAD
+		land_sprite.play("bug_dead")
+	
+	await get_tree().create_timer(0.2).timeout
+	died.emit()
+	position = CheckpointManager.last_checkpoint_position
+	current_state = CheckpointManager.last_state

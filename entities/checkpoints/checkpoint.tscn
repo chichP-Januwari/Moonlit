@@ -1,0 +1,107 @@
+[gd_scene format=3 uid="uid://rplnttnixail"]
+
+[ext_resource type="Texture2D" uid="uid://dnkr5vqwaqs1t" path="res://entities/checkpoints/earthworm.png" id="1_dafoe"]
+[ext_resource type="Script" uid="uid://dfrbt2a1yxnhl" path="res://entities/checkpoints/checkpoint.gd" id="1_ltqip"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_owhx7"]
+size = Vector2(16, 16)
+
+[sub_resource type="Animation" id="Animation_dafoe"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("1_dafoe")]
+}
+
+[sub_resource type="Animation" id="Animation_ltqip"]
+resource_name = "earthworm_bob"
+length = 1.7500083854876458
+loop_mode = 1
+step = 0.083333336
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2.0000083),
+"transitions": PackedFloat32Array(1.6245047, 1, 1, 1, 1.6245047),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 1), Vector2(0, 0), Vector2(0, -1), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("1_dafoe")]
+}
+
+[sub_resource type="Animation" id="Animation_brbcs"]
+resource_name = "earthworm_jim"
+length = 0.5000083482347428
+step = 0.083333336
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [null]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_brbcs"]
+_data = {
+&"RESET": SubResource("Animation_dafoe"),
+&"earthworm_bob": SubResource("Animation_ltqip"),
+&"earthworm_jim": SubResource("Animation_brbcs")
+}
+
+[node name="Checkpoint" type="Area2D" unique_id=1993753027 node_paths=PackedStringArray("animation_player", "collision")]
+collision_mask = 4
+monitorable = false
+script = ExtResource("1_ltqip")
+animation_player = NodePath("AnimationPlayer")
+collision = NodePath("CollisionShape2D")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2079694513]
+shape = SubResource("RectangleShape2D_owhx7")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2027156685]
+texture = ExtResource("1_dafoe")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1590135819]
+libraries/ = SubResource("AnimationLibrary_brbcs")
+autoplay = &"earthworm_bob"
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

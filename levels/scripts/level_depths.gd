@@ -1,0 +1,2 @@
+extends BaseLevel
+class_name LevelDepths

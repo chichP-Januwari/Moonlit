@@ -1,0 +1,338 @@
+[gd_scene format=3 uid="uid://p0r2022nm1oy"]
+
+[ext_resource type="Texture2D" uid="uid://b3ja3xjgv1klv" path="res://entities/iggy/larva_charge.png" id="1_0iaq1"]
+[ext_resource type="Script" uid="uid://7d05c3vwc6u5" path="res://entities/iggy/scripts/iggy.gd" id="1_r07pv"]
+[ext_resource type="Texture2D" uid="uid://bxy51j4tdoof6" path="res://entities/iggy/larva_idle.png" id="1_yvv5f"]
+[ext_resource type="Texture2D" uid="uid://cqe02jprs5fce" path="res://entities/iggy/ring_charge.png" id="2_1k0yv"]
+[ext_resource type="Texture2D" uid="uid://dakagf28bwwxn" path="res://entities/iggy/ring_reset.png" id="2_ghn85"]
+[ext_resource type="Texture2D" uid="uid://cjh0daqwfc27k" path="res://entities/iggy/larva_charging.png" id="2_r07pv"]
+[ext_resource type="Texture2D" uid="uid://dsre2rkofjdua" path="res://entities/iggy/ring_glide.png" id="3_m3e4n"]
+[ext_resource type="Texture2D" uid="uid://dcbjvydk8f6tl" path="res://entities/iggy/larva_swim.png" id="4_6k3pg"]
+[ext_resource type="Texture2D" uid="uid://o8nynrprtv7n" path="res://entities/iggy/larva_fall.png" id="4_8nkt6"]
+[ext_resource type="Texture2D" uid="uid://c5ucusfopoff7" path="res://entities/iggy/ring_last_charge.png" id="4_kpo8w"]
+[ext_resource type="Texture2D" uid="uid://wlmovjwf4p43" path="res://entities/iggy/larva_jump.png" id="5_6k3pg"]
+[ext_resource type="Script" uid="uid://bf0pxu4tkfnt5" path="res://entities/iggy/scripts/indicator_ring.gd" id="7_m3e4n"]
+[ext_resource type="Texture2D" uid="uid://r0exy1qcqfwr" path="res://entities/iggy/larva_tired.png" id="8_okg2f"]
+[ext_resource type="Texture2D" uid="uid://dkn7of7gbtojp" path="res://entities/iggy/bug_fall.png" id="9_4yq00"]
+[ext_resource type="Texture2D" uid="uid://cuk32vu15nws" path="res://entities/iggy/larva_dead.png" id="9_m3e4n"]
+[ext_resource type="Texture2D" uid="uid://cqpu4hmpq4fm5" path="res://entities/iggy/bug_idle.png" id="10_wnlrj"]
+[ext_resource type="Texture2D" uid="uid://dmvw20bkx05b1" path="res://entities/iggy/bug_glide.png" id="10_x4ipo"]
+[ext_resource type="Texture2D" uid="uid://c5arbq3qr85lr" path="res://entities/iggy/bug_jump.png" id="11_x4ipo"]
+[ext_resource type="Texture2D" uid="uid://ddfcjli7rmroe" path="res://entities/iggy/bug_run.png" id="12_ghn85"]
+[ext_resource type="Texture2D" uid="uid://7kvuiuq55rcv" path="res://entities/iggy/bug_tired.png" id="14_ghn85"]
+[ext_resource type="Texture2D" uid="uid://2rjt0lld4qu6" path="res://entities/iggy/bug_dead.png" id="15_kpo8w"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_0iaq1"]
+radius = 5.0
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_a5ap3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_1k0yv")
+}],
+"loop": 1,
+"name": &"ring_charge",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_m3e4n")
+}],
+"loop": 1,
+"name": &"ring_glide",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_kpo8w")
+}],
+"loop": 1,
+"name": &"ring_last_charge",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ghn85")
+}],
+"loop": 0,
+"name": &"ring_reset",
+"speed": 1.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8nkt6"]
+atlas = ExtResource("1_0iaq1")
+region = Rect2(0, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_okg2f"]
+atlas = ExtResource("2_r07pv")
+region = Rect2(0, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lak1d"]
+atlas = ExtResource("1_yvv5f")
+region = Rect2(0, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0r15m"]
+atlas = ExtResource("1_yvv5f")
+region = Rect2(32, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e8nlp"]
+atlas = ExtResource("4_6k3pg")
+region = Rect2(0, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vt8gv"]
+atlas = ExtResource("4_6k3pg")
+region = Rect2(32, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w0q0a"]
+atlas = ExtResource("4_6k3pg")
+region = Rect2(64, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4yq00"]
+atlas = ExtResource("4_6k3pg")
+region = Rect2(96, 0, 32, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6k3pg"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8nkt6")
+}],
+"loop": 1,
+"name": &"larva_charge",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_okg2f")
+}],
+"loop": 1,
+"name": &"larva_charging",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_m3e4n")
+}],
+"loop": 0,
+"name": &"larva_dead",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_8nkt6")
+}],
+"loop": 0,
+"name": &"larva_fall",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lak1d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0r15m")
+}],
+"loop": 1,
+"name": &"larva_idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_6k3pg")
+}],
+"loop": 1,
+"name": &"larva_jump",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e8nlp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vt8gv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w0q0a")
+}, {
+"duration": 6.0,
+"texture": SubResource("AtlasTexture_4yq00")
+}],
+"loop": 1,
+"name": &"larva_swim",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_okg2f")
+}],
+"loop": 1,
+"name": &"larva_tired",
+"speed": 1.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4jgiv"]
+atlas = ExtResource("10_wnlrj")
+region = Rect2(0, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bqi8r"]
+atlas = ExtResource("10_wnlrj")
+region = Rect2(32, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fki88"]
+atlas = ExtResource("12_ghn85")
+region = Rect2(0, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1k0yv"]
+atlas = ExtResource("12_ghn85")
+region = Rect2(32, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m3e4n"]
+atlas = ExtResource("12_ghn85")
+region = Rect2(64, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kpo8w"]
+atlas = ExtResource("12_ghn85")
+region = Rect2(96, 0, 32, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_owhx7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("15_kpo8w")
+}],
+"loop": 0,
+"name": &"bug_dead",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_4yq00")
+}],
+"loop": 1,
+"name": &"bug_fall",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("10_x4ipo")
+}],
+"loop": 1,
+"name": &"bug_glide",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4jgiv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bqi8r")
+}],
+"loop": 1,
+"name": &"bug_idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("11_x4ipo")
+}],
+"loop": 1,
+"name": &"bug_jump",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fki88")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1k0yv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m3e4n")
+}, {
+"duration": 4.0,
+"texture": SubResource("AtlasTexture_kpo8w")
+}],
+"loop": 1,
+"name": &"bug_run",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("14_ghn85")
+}],
+"loop": 1,
+"name": &"bug_tired",
+"speed": 1.0
+}]
+
+[node name="Iggy" type="CharacterBody2D" unique_id=328791983 node_paths=PackedStringArray("indicator_ring", "water_sprite", "land_sprite", "max_charging_time", "max_charge_time", "max_jump_time", "max_glide_time", "jump_cooldown")]
+visibility_layer = 4
+collision_layer = 4
+collision_mask = 27
+script = ExtResource("1_r07pv")
+indicator_ring = NodePath("IndicatorRing")
+water_sprite = NodePath("WaterSprite")
+land_sprite = NodePath("LandSprite")
+max_charging_time = NodePath("MaxChargingTime")
+max_charge_time = NodePath("MaxChargeTime")
+max_jump_time = NodePath("MaxJumpTime")
+max_glide_time = NodePath("MaxGlideTime")
+jump_cooldown = NodePath("JumpCooldown")
+
+[node name="CollisionShape" type="CollisionShape2D" parent="." unique_id=2110471759]
+position = Vector2(0, 3)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_0iaq1")
+
+[node name="IndicatorRing" type="AnimatedSprite2D" parent="." unique_id=781482051 node_paths=PackedStringArray("iggy")]
+modulate = Color(1, 1, 1, 0.74509805)
+visibility_layer = 4
+sprite_frames = SubResource("SpriteFrames_a5ap3")
+animation = &"ring_reset"
+script = ExtResource("7_m3e4n")
+iggy = NodePath("..")
+
+[node name="WaterSprite" type="AnimatedSprite2D" parent="." unique_id=1779653258]
+visibility_layer = 4
+sprite_frames = SubResource("SpriteFrames_6k3pg")
+animation = &"larva_dead"
+autoplay = "larva_idle"
+
+[node name="LandSprite" type="AnimatedSprite2D" parent="." unique_id=209853300]
+visibility_layer = 4
+sprite_frames = SubResource("SpriteFrames_owhx7")
+animation = &"bug_dead"
+autoplay = "bug_idle"
+
+[node name="MaxChargingTime" type="Timer" parent="." unique_id=782257033]
+process_callback = 0
+wait_time = 0.5
+one_shot = true
+
+[node name="MaxChargeTime" type="Timer" parent="." unique_id=822171388]
+process_callback = 0
+one_shot = true
+
+[node name="MaxJumpTime" type="Timer" parent="." unique_id=2004068548]
+process_callback = 0
+wait_time = 0.05
+one_shot = true
+
+[node name="MaxGlideTime" type="Timer" parent="." unique_id=1257844414]
+process_callback = 0
+wait_time = 8.0
+one_shot = true
+
+[node name="JumpCooldown" type="Timer" parent="." unique_id=1291280119]
+process_callback = 0
+wait_time = 0.1
+one_shot = true
+
+[node name="RightmostTile" type="Node2D" parent="." unique_id=1623508388]
+position = Vector2(20, 3)
+
+[node name="LeftmostTile" type="Node2D" parent="." unique_id=1818163708]
+position = Vector2(-20, 3)
+
+[connection signal="animation_changed" from="IndicatorRing" to="IndicatorRing" method="_on_animation_changed"]

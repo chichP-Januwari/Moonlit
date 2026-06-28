@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://ht5m8f8pk811"]
+
+[ext_resource type="Script" uid="uid://bu124lv0oc1hc" path="res://gamemanager/game_manager.gd" id="1_6g6wi"]
+[ext_resource type="PackedScene" uid="uid://b04x026eogjhc" path="res://ui/ui.tscn" id="1_g2oqv"]
+
+[node name="GameManager" type="Node2D" unique_id=1100541342 node_paths=PackedStringArray("ui")]
+process_mode = 3
+script = ExtResource("1_6g6wi")
+ui = NodePath("UI")
+
+[node name="UI" parent="." unique_id=1938871209 instance=ExtResource("1_g2oqv")]
+
+[editable path="UI"]
